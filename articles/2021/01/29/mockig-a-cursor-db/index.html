@@ -7,14 +7,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 
-  <title>Nuevo post test</title>
+  <title>Mockig a database cursor instance</title>
 
 
   <meta name="HandheldFriendly" content="True" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="origin" />
   <meta name="generator" content="Pelican" />
-<link href="/articles/2020/05/25/test/" rel="canonical" />
+<link href="/articles/2021/01/29/mockig-a-cursor-db/" rel="canonical" />
   <!-- Feed -->
         <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Cronología de ideas desordenadas Full Atom Feed" />
           <link href="/feeds/{slug}.atom.xml" type="application/atom+xml" rel="alternate" title="Cronología de ideas desordenadas Categories Atom Feed" />
@@ -38,7 +38,7 @@
 
 
 
-    <meta name="description" content="Como todo principio, hay un Hola Mundo!.">
+    <meta name="description" content="I found an issue recently, when I tried to mock a function that has the following behavior. There is a query to database to fetch...">
 
     <meta name="author" content="nestornav">
 
@@ -48,12 +48,12 @@
 
 <!-- Open Graph -->
 <meta property="og:site_name" content="Cronología de ideas desordenadas"/>
-<meta property="og:title" content="Nuevo post test"/>
-<meta property="og:description" content="Como todo principio, hay un Hola Mundo!."/>
+<meta property="og:title" content="Mockig a database cursor instance"/>
+<meta property="og:description" content="I found an issue recently, when I tried to mock a function that has the following behavior. There is a query to database to fetch..."/>
 <meta property="og:locale" content="en_US"/>
-<meta property="og:url" content="/articles/2020/05/25/test/"/>
+<meta property="og:url" content="/articles/2021/01/29/mockig-a-cursor-db/"/>
 <meta property="og:type" content="article"/>
-<meta property="article:published_time" content="2020-05-25 00:00:00-03:00"/>
+<meta property="article:published_time" content="2021-01-29 00:00:00-03:00"/>
 <meta property="article:modified_time" content=""/>
 <meta property="article:author" content="/author/nestornav">
 <meta property="article:section" content="articles"/>
@@ -62,20 +62,20 @@
 <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@www.twitter.com/Nestor_Navarro">
-    <meta name="twitter:title" content="Nuevo post test">
-    <meta name="twitter:url" content="/articles/2020/05/25/test/">
+    <meta name="twitter:title" content="Mockig a database cursor instance">
+    <meta name="twitter:url" content="/articles/2021/01/29/mockig-a-cursor-db/">
 
         <meta name="twitter:image:src" content="/theme/images/post-bg.jpg">
 
-      <meta name="twitter:description" content="Como todo principio, hay un Hola Mundo!.">
+      <meta name="twitter:description" content="I found an issue recently, when I tried to mock a function that has the following behavior. There is a query to database to fetch...">
 
 <script type="application/ld+json">
 {
   "@context": "http://schema.org",
   "@type": "Article",
-  "name": "Nuevo post test",
-  "headline": "Nuevo post test",
-  "datePublished": "2020-05-25 00:00:00-03:00",
+  "name": "Mockig a database cursor instance",
+  "headline": "Mockig a database cursor instance",
+  "datePublished": "2021-01-29 00:00:00-03:00",
   "dateModified": "",
   "author": {
     "@type": "Person",
@@ -83,8 +83,8 @@
     "url": "/author/nestornav"
   },
   "image": "/theme/images/post-bg.jpg",
-  "url": "/articles/2020/05/25/test/",
-  "description": "Como todo principio, hay un Hola Mundo!."
+  "url": "/articles/2021/01/29/mockig-a-cursor-db/",
+  "description": "I found an issue recently, when I tried to mock a function that has the following behavior. There is a query to database to fetch..."
 }
 </script>
 </head>
@@ -120,12 +120,14 @@
             <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
           </span>
         </nav>
-        <h1 class="post-title">Nuevo post test</h1>
+        <h1 class="post-title">Mockig a database cursor instance</h1>
         <!-- TODO : Proper class for headline -->
         <span class="post-meta">
                 <a href="/author/nestornav">Nestor Navarro</a>
-            | <time datetime="Mon 25 May 2020">Mon 25 May 2020</time>
+            | <time datetime="Fri 29 January 2021">Fri 29 January 2021</time>
 
+                | Translations:
+                    <a href="/mockig-a-cursor-db-sp.html" hreflang="sp">sp</a>
         </span>
         <!-- TODO : Modified check -->
       </div>
@@ -139,15 +141,43 @@
         <article class="post">
         <div class="inner">
             <section class="post-content">
-                <p>Como todo principio, hay un Hola Mundo!.</p>
+                <p>I found an issue recently, when I tried to mock a function that has the following behavior.
+There is a query to database to fetch several rows, the result is a cursor that will be iterated later. Hence each iteration will write a file with the result.
+The designed test assert if the function write or not the file.</p>
+<p>A code example about my first attemp:</p>
+<div class="highlight"><pre><span></span><code><span class="n">output_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s1">&#39;output_csv.csv&#39;</span>
+
+<span class="c1"># The folling function retrive a db connection instance</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">get_connection_db</span><span class="p">()</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">return_value</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="c1"># Function to test</span>
+<span class="n">process_query_result</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</code></pre></div>
+
+<p>The test aims to mock both a new database connection and the cursor. Later that the cursor will be iterated and after call <code>fetchone</code> the result will be written as a line into the file.
+In this case I used the property <a href="https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.return_value">return_value</a> from mock. This property will return a list of integer each time that <code>cursor</code> is consumed from <code>process_query_result</code>.</p>
+<p>The test step described before did not work also I needed to interrupt the execution due to the test never end. That situation happent because the function <code>process_query_result</code> use a while statement over the cursor and never break the loop.</p>
+<p>With a little bit of debuging time, I found which was my mistake. The property <code>return_value</code> returned the full list of integers each time that <code>fetch_one</code> function of the cursor was called. So the loop never reaches the end in consequence the iterator never got an <code>StopIteration</code>.</p>
+<p>What I was looking for from the very first time was the <a href="https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.side_effect">side_effect</a> property. This one has more or less the following behave:</p>
+<blockquote>
+<p>This can either be a function to be called when the mock is called, an iterable or an exception (class or instance) to be raised.</p>
+</blockquote>
+<p>Eureka! what I needed! Something that mimics an iterable! From now <code>fetchone</code> will not reutrn the full list. Finally I needed just tweak a single line as follow:</p>
+<div class="highlight"><pre><span></span><code><span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">return_fav_list</span>
+</code></pre></div>
+
+<p>So the test ran right this time. In a nutshell if you need mock an iterable instance inside a fuction, the best option will be use <code>side_effect</code>.</p>
             </section>
 
             <section class="post-info">
                 <div class="post-share">
-                    <a class="twitter" href="https://twitter.com/share?text=Nuevo post test&amp;url=/articles/2020/05/25/test/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <a class="twitter" href="https://twitter.com/share?text=Mockig a database cursor instance&amp;url=/articles/2021/01/29/mockig-a-cursor-db/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
                     <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
                     </a>
-                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=/articles/2020/05/25/test/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=/articles/2021/01/29/mockig-a-cursor-db/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
                     <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
                     </a>
                     <div class="clear"></div>
